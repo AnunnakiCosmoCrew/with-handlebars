@@ -1,7 +1,7 @@
 # With Handlebars — theory core
 
 The pure-TypeScript music-theory engine behind
-[With Handlebars](https://withhandlebars.pages.dev), a guitar fretboard explorer
+[With Handlebars](https://withhandlebars.com), a guitar fretboard explorer
 ([with-handlebars-web](https://github.com/AnunnakiCosmoCrew/with-handlebars-web)).
 
 Zero UI, zero DOM, zero runtime dependencies. The library computes; the app only
@@ -36,6 +36,12 @@ npm run build   # emits dist/ (ESM + d.ts)
 The web app consumes this repo as a `file:` dependency from a sibling checkout —
 see [with-handlebars-web](https://github.com/AnunnakiCosmoCrew/with-handlebars-web)
 for the layout.
+
+## Contributing
+
+Theory corrections are the most valuable thing you can send, and they want a
+named source. See [CONTRIBUTING.md](CONTRIBUTING.md) — including the two things
+that look like bugs and aren't.
 
 ## License
 
