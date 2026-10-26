@@ -37,3 +37,10 @@ export { selectionMidiNotes } from './playback.js'
 export type { PlaybackKind, PlaybackNotes } from './playback.js'
 export { ROOTS } from './roots.js'
 export type { RootOption } from './roots.js'
+export { identifyChords, identifyFromPositions } from './identify.js'
+export type {
+  IdentifyInput,
+  IdentifyOptions,
+  ChordCandidate,
+  FretPosition,
+} from './identify.js'

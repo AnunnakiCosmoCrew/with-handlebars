@@ -1,15 +1,23 @@
 import { Note } from 'tonal'
-import type { Tuning } from './types.js'
+import type { Instrument, Tuning } from './types.js'
 
 /**
- * The 23 tuning presets, low string to high. Authored as spelled notes with
+ * The tuning presets, low string to high: 23 six-string guitar tunings, then
+ * bass, ukulele, baritone and seven-string tunings. Not every tuning is
+ * low-to-high in pitch: the reentrant ukulele has a high first string. Authored as spelled notes with
  * octaves so letters and MIDI can never drift apart.
  */
-const tuning = (id: string, name: string, notes: string): Tuning => {
+const tuning = (
+  id: string,
+  name: string,
+  notes: string,
+  instrument: Instrument = 'guitar',
+): Tuning => {
   const spelled = notes.split(' ')
   return {
     id,
     name,
+    instrument,
     strings: spelled.map(n => {
       const midi = Note.midi(n)
       if (midi === null) throw new Error(`bad tuning note ${n} in ${id}`)
@@ -43,6 +51,13 @@ export const TUNINGS: Tuning[] = [
   tuning('low-c', 'Low C', 'C2 G2 D3 G3 A3 D4'),
   tuning('all-fourths', 'All Fourths', 'E2 A2 D3 G3 C4 F4'),
   tuning('nst', 'New Standard (NST)', 'C2 G2 D3 A3 E4 G4'),
+  tuning('baritone', 'Baritone (B Standard)', 'B1 E2 A2 D3 F#3 B3'),
+  tuning('seven-standard', '7-String Standard', 'B1 E2 A2 D3 G3 B3 E4'),
+  tuning('seven-drop-a', '7-String Drop A', 'A1 E2 A2 D3 G3 B3 E4'),
+  tuning('bass-4', 'Bass 4-String', 'E1 A1 D2 G2', 'bass'),
+  tuning('bass-5', 'Bass 5-String', 'B0 E1 A1 D2 G2', 'bass'),
+  tuning('ukulele', 'Ukulele (Reentrant)', 'G4 C4 E4 A4', 'ukulele'),
+  tuning('ukulele-low-g', 'Ukulele (Low G)', 'G3 C4 E4 A4', 'ukulele'),
 ]
 
 const byId = new Map(TUNINGS.map(t => [t.id, t]))

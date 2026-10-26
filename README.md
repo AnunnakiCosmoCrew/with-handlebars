@@ -10,11 +10,17 @@ draws what the theory already knows.
 > Naming note: unrelated to Handlebars.js, the templating library. The npm scope
 > keeps them apart: `@anunnakicosmocrew/handlebars`.
 
+Try it in the browser at [withhandlebars.com](https://withhandlebars.com): every
+chord and scale the core knows has its own page, for example
+[A minor 7 in standard tuning](https://withhandlebars.com/standard/a/chord/minor-7/).
+
 ## What's inside
 
 - **58 chord qualities and 168 scales** — the 72 Melakarta ragas are generated
   from their formula, not hand-typed.
-- **23 guitar tunings** plus per-string detuning, up to 24 frets.
+- **30 tunings for guitar, bass and ukulele** — standard, drop and open tunings,
+  seven-string, baritone, four- and five-string bass, reentrant and low-G
+  ukulele — plus per-string detuning, up to 24 frets.
 - **Enharmonic spelling that tells the truth** — strict mode carries double
   sharps and double flats so every degree keeps its letter; simple mode folds
   them for casual reading.

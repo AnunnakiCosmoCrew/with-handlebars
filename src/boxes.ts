@@ -11,10 +11,31 @@ export type Box = {
   index: number
   /** Degree token of the anchor tone at minFret, e.g. "b3" — for UI captions. */
   anchorDegree: DegreeToken
-  /** First fret of the box: where its anchor tone sits on the LOWEST string. */
+  /** First fret of the box: where its anchor tone sits on the lowest-pitched string. */
   minFret: number
   /** Last fret of the box, inclusive; clipped to the neck end. */
   maxFret: number
+}
+
+/**
+ * Open pitch of the lowest-sounding string. Usually strings[0], but a
+ * reentrant tuning (ukulele G4 C4 E4 A4) has a first string above the second,
+ * so boxes anchor on the lowest-pitched string instead.
+ */
+function lowestOpen(tuning: Tuning): number | undefined {
+  return tuning.strings.length ? Math.min(...tuning.strings) : undefined
+}
+
+/**
+ * String indices in ascending open-pitch order (ties keep string order). The
+ * walks visit strings in this order and report the original index, so a
+ * reentrant tuning climbs from its lowest string; for ordinary tunings it is
+ * simply 0..n-1.
+ */
+function ascendingStrings(tuning: Tuning): number[] {
+  return tuning.strings
+    .map((_, i) => i)
+    .sort((a, b) => tuning.strings[a]! - tuning.strings[b]! || a - b)
 }
 
 /** Frets a box extends beyond its anchor: 5-fret inclusive hand span. */
@@ -24,7 +45,10 @@ const BOX_SPAN = 4
  * One box per occurrence of a selection tone on the lowest string, all the
  * way up the neck — so longer necks offer more positions, each a place the
  * hand can sit. Chroma-driven: works for any selection (a chord's boxes are
- * its arpeggio boxes), any tuning, any string count.
+ * its arpeggio boxes), any tuning, any string count. In a reentrant tuning
+ * (string 0 is not the lowest pitch) a box's minFret refers to the
+ * lowest-pitched string, and the pattern walks visit strings from lowest to
+ * highest pitch while reporting the original string index.
  */
 export function selectionBoxes(
   tuning: Tuning,
@@ -36,7 +60,7 @@ export function selectionBoxes(
   // box" promise, so refuse them.
   if (fretCount < DEFAULT_FRET_COUNT)
     throw new Error(`fretCount must be at least ${DEFAULT_FRET_COUNT}, got ${fretCount}`)
-  const open = tuning.strings[0]
+  const open = lowestOpen(tuning)
   if (open === undefined) throw new Error('tuning has no strings')
   const byChroma = selectionChromaMap(selection)
   const boxes: Box[] = []
@@ -83,7 +107,7 @@ export function boxPattern(
   const { nextTone, start } = walkSetup(tuning, selection, box, fretCount)
   const notes: PatternNote[] = []
   let tone = start
-  for (let s = 0; s < tuning.strings.length; s++) {
+  for (const s of ascendingStrings(tuning)) {
     const open = tuning.strings[s]!
     // The walk continues on this string where the previous one left off;
     // tones that would land below the nut here are unreachable and skipped.
@@ -111,7 +135,7 @@ function walkSetup(
 ): { chromas: Set<number>; nextTone: (midi: number) => number; start: number } {
   if (fretCount < DEFAULT_FRET_COUNT)
     throw new Error(`fretCount must be at least ${DEFAULT_FRET_COUNT}, got ${fretCount}`)
-  const open0 = tuning.strings[0]
+  const open0 = lowestOpen(tuning)
   if (open0 === undefined) throw new Error('tuning has no strings')
   if (box.minFret < 0 || box.maxFret > fretCount || box.minFret > box.maxFret)
     throw new Error(
@@ -146,13 +170,14 @@ export function diagonalPattern(
 ): PatternNote[] {
   const { nextTone, start } = walkSetup(tuning, selection, box, fretCount)
   const notes: PatternNote[] = []
-  const strings = tuning.strings.length
+  const order = ascendingStrings(tuning)
+  const strings = order.length
   for (let pair = 0; pair * 2 < strings; pair++) {
     const octaveStart = start + 12 * pair
     const split = octaveStart + 7
     const hasSecond = pair * 2 + 1 < strings
     for (let tone = octaveStart; tone < octaveStart + 12; tone = nextTone(tone)) {
-      const s = hasSecond && tone >= split ? pair * 2 + 1 : pair * 2
+      const s = order[hasSecond && tone >= split ? pair * 2 + 1 : pair * 2]!
       const fret = tone - tuning.strings[s]!
       if (fret < 0 || fret > fretCount) continue
       notes.push({ string: s, fret, midi: tone })
@@ -176,9 +201,10 @@ export function runPattern(
 ): PatternNote[] {
   const { nextTone, start } = walkSetup(tuning, selection, box, fretCount)
   const notes: PatternNote[] = []
-  const lastString = tuning.strings.length - 1
+  const order = ascendingStrings(tuning)
+  const lastString = order[order.length - 1]!
   let tone = start
-  for (let s = 0; s <= lastString; s++) {
+  for (const s of order) {
     const open = tuning.strings[s]!
     while (tone - open < 0) tone = nextTone(tone)
     let f0 = tone - open
@@ -210,7 +236,7 @@ export function sweepPath(
   const { chromas, start } = walkSetup(tuning, selection, box, fretCount)
   const notes: PatternNote[] = []
   let lastMidi = start - 1
-  for (let s = 0; s < tuning.strings.length; s++) {
+  for (const s of ascendingStrings(tuning)) {
     const open = tuning.strings[s]!
     const hi = open + box.maxFret
     let m = Math.max(open + box.minFret, lastMidi + 1)

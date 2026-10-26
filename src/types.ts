@@ -6,9 +6,13 @@
  */
 export type DegreeToken = string
 
+export type Instrument = 'guitar' | 'bass' | 'ukulele'
+
 export type Tuning = {
   id: string
   name: string
+  /** Instrument family for UI grouping; absent means 'guitar'. */
+  instrument?: Instrument
   /** MIDI note numbers, LOW string to HIGH string. Length = string count. */
   strings: number[]
   /** Spelled open-string names, low to high (display spelling, e.g. "A#"). */
