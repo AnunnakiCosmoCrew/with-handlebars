@@ -156,29 +156,47 @@ export function generateMelakartaScales(): ScaleType[] {
   })
 }
 
-const THETA_SCALES: ScaleType[] = [
-  scale('Asavari Theta', '1 2 b3 4 5 b6 b7'),
-  scale('Bilaval Theta', '1 2 3 4 5 6 7'),
-  scale('Bhairav Theta', '1 b2 3 4 5 b6 7'),
-  scale('Bhairavi Theta', '1 b2 b3 4 5 b6 b7'),
-  scale('Kafi Theta', '1 2 b3 4 5 6 b7'),
-  scale('Kalyan Theta', '1 2 3 #4 5 6 7'),
-  scale('Khamaj Theta', '1 2 3 4 5 6 b7'),
-  scale('Marva Theta', '1 b2 3 #4 5 6 7'),
-  scale('Purvi Theta', '1 b2 3 #4 5 b6 7'),
-  scale('Todi Theta', '1 b2 b3 #4 5 b6 7'),
+/**
+ * The ten Hindustani parent scales (thaats, Bhatkhande's system). These were
+ * named "<name> Theta" until HB-174; LEGACY_SCALE_IDS keeps the old ids working.
+ */
+const THAAT_SCALES: ScaleType[] = [
+  scale('Asavari Thaat', '1 2 b3 4 5 b6 b7'),
+  scale('Bilaval Thaat', '1 2 3 4 5 6 7'),
+  scale('Bhairav Thaat', '1 b2 3 4 5 b6 7'),
+  scale('Bhairavi Thaat', '1 b2 b3 4 5 b6 b7'),
+  scale('Kafi Thaat', '1 2 b3 4 5 6 b7'),
+  scale('Kalyan Thaat', '1 2 3 #4 5 6 7'),
+  scale('Khamaj Thaat', '1 2 3 4 5 6 b7'),
+  scale('Marva Thaat', '1 b2 3 #4 5 6 7'),
+  scale('Purvi Thaat', '1 b2 3 #4 5 b6 7'),
+  scale('Todi Thaat', '1 b2 b3 #4 5 b6 7'),
 ]
 
 export const SCALE_TYPES: ScaleType[] = [
   ...GENERAL_SCALES,
   ...generateMelakartaScales(),
-  ...THETA_SCALES,
+  ...THAAT_SCALES,
 ]
 
 const byId = new Map(SCALE_TYPES.map(s => [s.id, s]))
 
+/**
+ * Retired scale id → current id. Ids live in shared links and saved boards, so
+ * a rename must never drop one: add the old id here instead.
+ */
+export const LEGACY_SCALE_IDS: ReadonlyMap<string, string> = new Map(
+  THAAT_SCALES.map(s => [s.id.replace(/-thaat$/, '-theta'), s.id]),
+)
+
+/** The current id for a scale id, old or new; undefined if it names no scale. */
+export function resolveScaleId(id: string): string | undefined {
+  if (byId.has(id)) return id
+  return LEGACY_SCALE_IDS.get(id)
+}
+
 export function getScaleType(id: string): ScaleType {
-  const s = byId.get(id)
+  const s = byId.get(resolveScaleId(id) ?? id)
   if (!s) throw new Error(`unknown scale type: ${id}`)
   return s
 }

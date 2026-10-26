@@ -3,7 +3,13 @@ export { degreeToIntervalName, parseDegree, parseDegreeList } from './intervals.
 export type { ParsedDegree } from './intervals.js'
 export { spellDegree, simplifyNote, spellNote, formatNote, formatDegree } from './spelling.js'
 export { CHORD_TYPES, getChordType } from './chords.js'
-export { SCALE_TYPES, getScaleType, generateMelakartaScales } from './scales.js'
+export {
+  SCALE_TYPES,
+  LEGACY_SCALE_IDS,
+  getScaleType,
+  resolveScaleId,
+  generateMelakartaScales,
+} from './scales.js'
 export { TUNINGS, getTuning, STANDARD_TUNING, applyStringOffsets } from './tunings.js'
 export { getFretboardDots, selectionDegrees, DEFAULT_FRET_COUNT } from './fretboard.js'
 export { getSelectionInfo } from './info.js'

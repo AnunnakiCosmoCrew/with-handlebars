@@ -4,8 +4,9 @@ The pure-TypeScript music-theory engine behind
 [With Handlebars](https://withhandlebars.com), a guitar fretboard explorer
 ([with-handlebars-web](https://github.com/AnunnakiCosmoCrew/with-handlebars-web)).
 
-Zero UI, zero DOM, zero runtime dependencies. The library computes; the app only
-draws what the theory already knows.
+Zero UI, zero DOM, and one runtime dependency: [tonal](https://github.com/tonaljs/tonal),
+for parsing note and interval names. The library computes; the app only draws what
+the theory already knows.
 
 > Naming note: unrelated to Handlebars.js, the templating library. The npm scope
 > keeps them apart: `@anunnakicosmocrew/handlebars`.

@@ -17,8 +17,9 @@ ideas belong in issues too.
 ## What belongs here
 
 This repo is the theory: chords, scales, tunings, enharmonic spelling, fretboard
-math, roman numerals, harmonic function, voice leading. Zero UI, zero DOM, zero
-runtime dependencies — and that's a constraint, not an accident.
+math, roman numerals, harmonic function, voice leading. Zero UI, zero DOM, and one
+runtime dependency (tonal, for parsing note and interval names) — and that's a
+constraint, not an accident.
 
 Anything you can *see* — the board, the lenses, the staff, the circle, practice,
 audio, layout — belongs in
@@ -58,7 +59,7 @@ The suite is table-driven: new theory arrives as data plus its expected output,
 not as a bespoke test per case. Anything derivable from a formula gets generated
 rather than enumerated — that rule is why the raga set is trustworthy.
 
-Keep the dependency count at zero.
+Don't add runtime dependencies: tonal stays the only one.
 
 ## Conduct
 
